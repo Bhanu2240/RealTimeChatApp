@@ -1,1 +1,2 @@
 # RealTimeChatApp
+node_modules/
