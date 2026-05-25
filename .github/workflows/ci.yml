@@ -10,25 +10,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout repository
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
+      # Install backend dependencies
       - name: Install backend dependencies
         run: |
-          cd backend
+          cd Backend
           npm install
 
+      # Install frontend dependencies
       - name: Install frontend dependencies
         run: |
-          cd frontend
+          cd Frontend
           npm install
 
+      # Build frontend
       - name: Build frontend
         run: |
-          cd frontend
+          cd Frontend
           npm run build
