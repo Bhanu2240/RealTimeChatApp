@@ -9,6 +9,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:5175",
+  "http://18.208.197.41",
 ];
 const io = new Server(server, {
   cors: {
