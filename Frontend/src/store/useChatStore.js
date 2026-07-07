@@ -4,11 +4,15 @@ import { axiosInstance } from "../lib/axios";
 import { useAuthStore } from "./useAuthStore";
 export const useChatStore = create((set, get) => ({
 
-  messages: [],
-  users: [],
-  selectedUser: null,
-  isUsersLoading: false,
-  isMessagesLoading: false,
+messages: [],
+users: [],
+selectedUser: null,
+
+smartReplies: [],
+isGeneratingReplies: false,
+
+isUsersLoading: false,
+isMessagesLoading: false,
 
   getUsers: async () => {
     set({ isUsersLoading: true });
@@ -37,6 +41,7 @@ export const useChatStore = create((set, get) => ({
 
       set({
         messages: res.data,
+        smartReplies: [],
       });
     } catch (error) {
       toast.error(
@@ -83,6 +88,7 @@ export const useChatStore = create((set, get) => ({
             ...state.messages,
             res.data,
           ],
+          smartReplies: [],
         };
       });
     } catch (error) {
@@ -92,6 +98,42 @@ export const useChatStore = create((set, get) => ({
       );
     }
   },
+  generateSmartReplies: async () => {
+  const { selectedUser } = get();
+
+  if (!selectedUser) {
+    toast.error("Select a user first");
+    return;
+  }
+
+  set({
+    isGeneratingReplies: true,
+    smartReplies: [],
+  });
+
+  try {
+    const res = await axiosInstance.post(
+      "/ai/smart-replies",
+      {
+        receiverId: selectedUser._id,
+      }
+    );
+
+    set({
+      smartReplies: res.data.replies || [],
+    });
+  } catch (error) {
+    toast.error(
+      error.response?.data?.message ||
+      "Failed to generate replies"
+    );
+  } finally {
+    set({
+      isGeneratingReplies: false,
+    });
+  }
+},
+
   subscribeToMessages: () => {
     const socket = useAuthStore.getState().socket;
 
@@ -124,6 +166,7 @@ export const useChatStore = create((set, get) => ({
             ...state.messages,
             newMessage,
           ],
+          smartReplies: [],
         };
       });
     });
@@ -145,7 +188,9 @@ export const useChatStore = create((set, get) => ({
     );
   },
   setSelectedUser: (selectedUser) => {
-    set({ selectedUser });
+    set({ selectedUser,
+      smartReplies: [],
+     });
   },
 }));
 

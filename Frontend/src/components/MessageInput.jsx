@@ -1,16 +1,20 @@
 import { useRef, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
-import { Image, Send, X } from "lucide-react";
+import { Image, Send, X,Sparkles} from "lucide-react";
 import toast from "react-hot-toast";
 const MessageInput = () => {
   // LOCAL STATE
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
+ 
   // CHAT STORE
-  const sendMessage = useChatStore(
-    (state) => state.sendMessage
-  );
+const {
+  sendMessage,
+  generateSmartReplies,
+  smartReplies,
+  isGeneratingReplies,
+} = useChatStore();
   // HANDLE IMAGE CHANGE
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -87,6 +91,41 @@ const MessageInput = () => {
           </div>
         </div>
       )}
+      {/* AI SMART REPLIES */}
+<div className="mb-3">
+  <button
+    type="button"
+    onClick={generateSmartReplies}
+    disabled={isGeneratingReplies}
+    className="btn btn-outline btn-sm gap-2"
+  >
+    <Sparkles size={16} />
+    {isGeneratingReplies ? "Thinking..." : "AI Smart Replies"}
+  </button>
+</div>
+{smartReplies.length > 0 && (
+  <div className="mb-3 flex flex-wrap gap-2">
+    {smartReplies.map((reply, index) => (
+      <button
+        key={index}
+        type="button"
+        onClick={() => setText(reply)}
+        className="
+          px-4
+          py-2
+          rounded-full
+          bg-base-200
+          hover:bg-primary
+          hover:text-white
+          transition
+          text-sm
+        "
+      >
+        {reply}
+      </button>
+    ))}
+  </div>
+)}
 
       {/* FORM */}
       <form onSubmit={handleSendMessage} className="flex items-center gap-2">
