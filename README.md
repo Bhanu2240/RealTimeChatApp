@@ -1,4 +1,4 @@
-# 🌐 Real-Time Chat & Translation Application
+# 🌐 AI-Powered Real-Time Chat & Translation Application
 
 A full-stack real-time chat application that enables users to communicate instantly with live messaging, AI-powered smart replies, multilingual translation, text-to-speech, image sharing, and online user tracking.
 
